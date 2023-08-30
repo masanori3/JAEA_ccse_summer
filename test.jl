@@ -7,3 +7,5 @@ b0 = 1.0
 y0 = zeros(Float32,n)
 f(x0) = a0.*x0 .+ a1.*x0.^2 .+ b0 .+ 3*cos.(20*x0)
 y0[:] = f.(x0)
+plot(x0,y0,marker=:circle,fmt=:png)
+png("fig_qiita2-1")
