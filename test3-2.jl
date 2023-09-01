@@ -1,3 +1,18 @@
+using Plots
+using Flux
+
+function main()
+
+
+num = 30
+x = range(-2,2,length=num)
+y = range(-2,2,length=num)
+f(x,y) = x*y + cos(3*x)+exp(y/5)*x + tanh(y)*cos(3*y)
+z =[f(i,j) for i in x, j in y]'
+p = plot(x,y,z, st=:wireframe)
+savefig("original.png")
+
+
 num = 47
 numt = 19
 numtrain = num*num
@@ -61,7 +76,7 @@ function train_batch!(data_train,data_test,model,loss,opt,nt)
     batchsize = 128
     for it=1:nt
         data = make_random_batch(data_train,batchsize)
-        Flux.train!(loss, params(model),data, opt)
+        Flux.train!(loss, Flux.params(model),data, opt)
         if it% 100 == 0
             lossvalue = 0.0
             #testmode!(model, true)
@@ -79,3 +94,6 @@ train_batch!(inputdata_train,inputdata_test,model,loss,opt,nt) #学習
 znn =[model([i,j])[1] for i in x, j in y]'
 p = plot(x,y,[znn], st=:wireframe)
 savefig("dense.png")
+
+end
+main()
