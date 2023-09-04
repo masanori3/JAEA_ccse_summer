@@ -21,4 +21,3 @@ for i = 1:length(dataset)
     end
 end
 
-A = rand(1:numofdata,batchsize)
