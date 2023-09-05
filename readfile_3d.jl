@@ -1,4 +1,4 @@
-filename = "test_5002d.txt"
+filename = "test_2000_3d.txt"
 dataset = readlines(filename)
 numdata = countlines(filename)
 

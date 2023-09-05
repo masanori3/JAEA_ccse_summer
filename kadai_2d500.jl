@@ -64,6 +64,9 @@ function train_batch!(data_train,data_test,model,loss,opt,nt)
             end
             #testmode!(model, false)
             println("$(it)-th loss = ",lossvalue/length(data_test))
+            fp = open("kadai2d_lossvalue.txt", "a")
+            println(fp, "$(it)-th loss = ",lossvalue/length(data_test))
+            close(fp)
         end
     end
 end

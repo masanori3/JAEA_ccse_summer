@@ -50,14 +50,28 @@ end
 
 model = Chain(Dense(3,10,relu),Dense(10,10,relu),Dense(10,10,relu),Dense(10,1))
 loss(x,y) = Flux.mse(model(x), y)
-opt = ADAM() 
+opt = [Adam(), Descent(), Nesterov(), AdaGrad()]
+opt_name = ["Adam", "Descent", "Nesterov", "AdaGrad"]
 
 
-function train_batch!(data_train,data_test,model,loss,opt,nt)
-    batchsize = 128
+function train_batch!(data_train,data_test,model,loss,opt,nt,opt_name)
+    batchsize = 150
+    epoch_count = 0
+    fp = open("kadai3d_lossvalue_epoch_loss_" * opt_name * ".txt", "w")
+    fp2 = open("kadai3d_epoch_loss_function_" * opt_name * ".txt", "w")
     for it=1:nt
         data = make_random_batch(data_train,batchsize)
         Flux.train!(loss, Flux.params(model),data, opt)
+        if it% 12 == 0
+            lossvalue = 0.0
+            epoch_count += 1
+            for i=1:length(data_test)                
+                lossvalue += loss(data_test[i][1],data_test[i][2])
+            end
+            
+            println(fp2,epoch_count,"\t",lossvalue/length(data_test))
+            
+        end
         if it% 100 == 0
             lossvalue = 0.0
             #testmode!(model, true)
@@ -66,20 +80,24 @@ function train_batch!(data_train,data_test,model,loss,opt,nt)
             end
             #testmode!(model, false)
             println("$(it)-th loss = ",lossvalue/length(data_test))
-            fp = open("kadai3d_lossvalue.txt", "a")
+            
             println(fp, "$(it)-th loss = ",lossvalue/length(data_test))
-            close(fp)
+            
         end
     end
+    close(fp2)
+    close(fp)
 end
 
 nt = 3000
-train_batch!(inputdata_train,inputdata_test,model,loss,opt,nt) #学習
-histogram(z, bins =15)
-savefig("dense_original_3d.png")
-znn =[model([w[i],x[i],y[i]])[1] for i=1:numdata]
-histogram(znn, bins =15)
-savefig("dense_output_3d.png")
+for i = 1:length(opt)
+    train_batch!(inputdata_train,inputdata_test,model,loss,opt[i],nt,opt_name[i]) #学習
+    histogram(z, bins =15)
+    savefig("dense_original_3d_epoch_loss_" * opt_name[i] * ".png")
+    znn =[model([w[i],x[i],y[i]])[1] for i=1:numdata]
+    histogram(znn, bins =15)
+    savefig("dense_output_3d_epoch_loss_" * opt_name[i] * ".png")
+end
 end
 main()
 
