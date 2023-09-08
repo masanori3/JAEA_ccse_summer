@@ -48,8 +48,8 @@ function make_random_batch(data_input,batchsize)
     return data
 end
 
-model = Chain(Dense(3,10,relu),Dense(10,10,relu),Dense(10,10,relu),Dense(10,1))
-loss(x,y) = Flux.mse(model(x), y)
+#= model = Chain(Dense(3,10,relu),Dense(10,10,relu),Dense(10,10,relu),Dense(10,1))
+loss(x,y) = Flux.mse(model(x), y) =#
 opt = [Adam(), Descent(), Nesterov(), AdaGrad()]
 opt_name = ["Adam", "Descent", "Nesterov", "AdaGrad"]
 
@@ -91,6 +91,8 @@ end
 
 nt = 3000
 for i = 1:length(opt)
+    model = Chain(Dense(3,10,relu),Dense(10,10,relu),Dense(10,10,relu),Dense(10,1))
+    loss(x,y) = Flux.mse(model(x), y)
     train_batch!(inputdata_train,inputdata_test,model,loss,opt[i],nt,opt_name[i]) #学習
     histogram(z, bins =15)
     savefig("dense_original_3d_epoch_loss_" * opt_name[i] * ".png")
